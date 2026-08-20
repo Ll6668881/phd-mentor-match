@@ -295,7 +295,7 @@ export const MENTORS: Mentor[] = [
     publicationCount5y: 12,
   },
 
-  // ================= 软件工程 =================
+  // ================= 计算机科学与技术（软件方向） =================
   {
     id: 'se-001',
     name: '钱思远',
@@ -306,7 +306,7 @@ export const MENTORS: Mentor[] = [
     title: '教授',
     isDoctoralSupervisor: true,
     acceptingStudents: true,
-    disciplines: { level1: '软件工程', level2: '软件测试与质量保证' },
+    disciplines: { level1: '计算机科学与技术', level2: '软件测试与质量保证' },
     researchDirections: [
       '智能软件测试技术',
       '程序分析与缺陷检测',
@@ -331,7 +331,7 @@ export const MENTORS: Mentor[] = [
     title: '教授',
     isDoctoralSupervisor: true,
     acceptingStudents: true,
-    disciplines: { level1: '软件工程', level2: '形式化方法' },
+    disciplines: { level1: '计算机科学与技术', level2: '形式化方法' },
     researchDirections: [
       '形式化验证与程序安全',
       '并发系统建模与验证',
@@ -950,7 +950,7 @@ export const MENTORS: Mentor[] = [
     publicationCount5y: 12,
   },
 
-  // ================= 工商管理学 =================
+  // ================= 工商管理 =================
   {
     id: 'ba-001',
     name: '徐宁芝',
@@ -961,7 +961,7 @@ export const MENTORS: Mentor[] = [
     title: '教授',
     isDoctoralSupervisor: true,
     acceptingStudents: true,
-    disciplines: { level1: '工商管理学', level2: '创新创业管理' },
+    disciplines: { level1: '工商管理', level2: '创新创业管理' },
     researchDirections: [
       '技术创新与产业演化',
       '创业企业成长机制',

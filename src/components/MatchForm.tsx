@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { SchoolLevel, UserInput } from '../types';
-import { LEVEL1_DISCIPLINES } from '../data/disciplines';
+import { DISCIPLINE_CATEGORIES } from '../data/disciplines';
 import { REGIONS } from '../data/regions';
 import { EXAMPLE_INPUT } from '../data/exampleInput';
 
@@ -99,8 +99,12 @@ export default function MatchForm({ initial, onSubmit }: Props) {
             <label className={labelCls} htmlFor="level1">一级学科（必填）</label>
             <select id="level1" className={inputCls} value={level1} onChange={(e) => setLevel1(e.target.value)}>
               <option value="">请选择一级学科</option>
-              {LEVEL1_DISCIPLINES.map((d) => (
-                <option key={d} value={d}>{d}</option>
+              {DISCIPLINE_CATEGORIES.map((cat) => (
+                <optgroup key={cat.code} label={`${cat.code} ${cat.category}`}>
+                  {cat.disciplines.map((d) => (
+                    <option key={d.code} value={d.name}>{d.name}</option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </div>
