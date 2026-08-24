@@ -1,10 +1,7 @@
 import { useMemo, useState } from 'react';
-import type { SchoolLevel, UserInput } from '../types';
+import type { UserInput } from '../types';
 import { DISCIPLINE_CATEGORIES } from '../data/disciplines';
-import { REGIONS } from '../data/regions';
 import { EXAMPLE_INPUT } from '../data/exampleInput';
-
-const SCHOOL_LEVELS: SchoolLevel[] = ['985', '211', '双一流', '普通院校'];
 
 interface Props {
   initial: UserInput;
@@ -31,6 +28,7 @@ const inputCls =
 const labelCls = 'mb-1.5 block text-sm font-medium text-slate-600';
 
 export default function MatchForm({ initial, onSubmit }: Props) {
+  // ===== ① 个人专业基本信息（界面不变） =====
   const [level1, setLevel1] = useState(initial.discipline.level1);
   const [level2, setLevel2] = useState(initial.discipline.level2);
   const [papersText, setPapersText] = useState(initial.achievements.papers.join('\n'));
@@ -38,38 +36,53 @@ export default function MatchForm({ initial, onSubmit }: Props) {
   const [patentsText, setPatentsText] = useState(initial.achievements.patents.join('\n'));
   const [interestsText, setInterestsText] = useState(initial.achievements.researchInterests.join('、'));
   const [targetDirection, setTargetDirection] = useState(initial.achievements.targetDirection);
-  const [schoolLevels, setSchoolLevels] = useState<SchoolLevel[]>(initial.filters.schoolLevels);
-  const [region, setRegion] = useState(initial.filters.region);
-  const [onlyRecruiting, setOnlyRecruiting] = useState(initial.filters.onlyRecruiting);
+
+  // ===== ② 目标导师资料（由用户输入，匹配对象） =====
+  const t = initial.targetMentor;
+  const [tName, setTName] = useState(t.name);
+  const [tSchool, setTSchool] = useState(t.school);
+  const [tTitle, setTTitle] = useState(t.title);
+  const [tLevel1, setTLevel1] = useState(t.level1);
+  const [tLevel2, setTLevel2] = useState(t.level2);
+  const [tDirections, setTDirections] = useState(t.researchDirections.join('\n'));
+  const [tPapers, setTPapers] = useState(t.recentPapers.join('\n'));
+  const [tProjects, setTProjects] = useState(t.recentProjects.join('\n'));
+  const [tWebpage, setTWebpage] = useState(t.webpage);
+
   const [error, setError] = useState('');
 
-  const toggleLevel = (lv: SchoolLevel) =>
-    setSchoolLevels((prev) => (prev.includes(lv) ? prev.filter((x) => x !== lv) : [...prev, lv]));
-
-  /** 一键填充示例（Step5 演示用例） */
+  /** 一键填充示例（演示用例） */
   const fillExample = () => {
-    setLevel1(EXAMPLE_INPUT.discipline.level1);
-    setLevel2(EXAMPLE_INPUT.discipline.level2);
-    setPapersText(EXAMPLE_INPUT.achievements.papers.join('\n'));
-    setProjectsText(EXAMPLE_INPUT.achievements.projects.join('\n'));
-    setPatentsText(EXAMPLE_INPUT.achievements.patents.join('\n'));
-    setInterestsText(EXAMPLE_INPUT.achievements.researchInterests.join('、'));
-    setTargetDirection(EXAMPLE_INPUT.achievements.targetDirection);
-    setSchoolLevels(EXAMPLE_INPUT.filters.schoolLevels);
-    setRegion(EXAMPLE_INPUT.filters.region);
-    setOnlyRecruiting(EXAMPLE_INPUT.filters.onlyRecruiting);
+    const e = EXAMPLE_INPUT;
+    setLevel1(e.discipline.level1);
+    setLevel2(e.discipline.level2);
+    setPapersText(e.achievements.papers.join('\n'));
+    setProjectsText(e.achievements.projects.join('\n'));
+    setPatentsText(e.achievements.patents.join('\n'));
+    setInterestsText(e.achievements.researchInterests.join('、'));
+    setTargetDirection(e.achievements.targetDirection);
+    const m = e.targetMentor;
+    setTName(m.name);
+    setTSchool(m.school);
+    setTTitle(m.title);
+    setTLevel1(m.level1);
+    setTLevel2(m.level2);
+    setTDirections(m.researchDirections.join('\n'));
+    setTPapers(m.recentPapers.join('\n'));
+    setTProjects(m.recentProjects.join('\n'));
+    setTWebpage(m.webpage);
     setError('');
   };
 
   const canSubmit = useMemo(
-    () => level1.trim() !== '' && targetDirection.trim() !== '',
-    [level1, targetDirection],
+    () => level1.trim() !== '' && targetDirection.trim() !== '' && tDirections.trim() !== '',
+    [level1, targetDirection, tDirections],
   );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) {
-      setError('请至少填写「一级学科」与「拟报考研究方向」');
+      setError('请至少填写「一级学科」「拟报考研究方向」与「目标导师的研究方向」');
       return;
     }
     setError('');
@@ -82,17 +95,28 @@ export default function MatchForm({ initial, onSubmit }: Props) {
         researchInterests: splitInterests(interestsText),
         targetDirection: targetDirection.trim(),
       },
-      filters: { schoolLevels, region, onlyRecruiting },
+      targetMentor: {
+        name: tName.trim(),
+        school: tSchool.trim(),
+        title: tTitle.trim(),
+        level1: tLevel1.trim(),
+        level2: tLevel2.trim(),
+        researchDirections: splitLines(tDirections),
+        recentPapers: splitLines(tPapers),
+        recentProjects: splitLines(tProjects),
+        webpage: tWebpage.trim(),
+      },
+      filters: { schoolLevels: [], region: '', onlyRecruiting: false },
     });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* ===== ① 学科信息 ===== */}
+      {/* ===== ① 学科信息（个人） ===== */}
       <section className="rounded-xl2 bg-white p-5 shadow-soft">
         <h3 className="mb-3 flex items-center gap-2 font-semibold text-slate-700">
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-macaron-lavender text-xs font-bold text-indigo-500">1</span>
-          学科信息
+          我的学科信息
         </h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -121,11 +145,11 @@ export default function MatchForm({ initial, onSubmit }: Props) {
         </div>
       </section>
 
-      {/* ===== ② 科研成果 ===== */}
+      {/* ===== ② 已有科研成果（个人简历） ===== */}
       <section className="rounded-xl2 bg-white p-5 shadow-soft">
         <h3 className="mb-3 flex items-center gap-2 font-semibold text-slate-700">
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-macaron-lavender text-xs font-bold text-indigo-500">2</span>
-          已有科研成果
+          我的已有科研成果
         </h3>
         <div className="space-y-4">
           <div>
@@ -153,7 +177,7 @@ export default function MatchForm({ initial, onSubmit }: Props) {
       <section className="rounded-xl2 bg-white p-5 shadow-soft">
         <h3 className="mb-3 flex items-center gap-2 font-semibold text-slate-700">
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-macaron-lavender text-xs font-bold text-indigo-500">3</span>
-          拟报考研究方向（必填）
+          我的拟报考研究方向（必填）
         </h3>
         <input
           id="target"
@@ -164,53 +188,60 @@ export default function MatchForm({ initial, onSubmit }: Props) {
         />
       </section>
 
-      {/* ===== ④ 可选过滤条件 ===== */}
-      <section className="rounded-xl2 bg-white p-5 shadow-soft">
-        <h3 className="mb-3 flex items-center gap-2 font-semibold text-slate-700">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-macaron-lavender text-xs font-bold text-indigo-500">4</span>
-          过滤条件（选填）
+      {/* ===== ④ 目标导师资料（由用户输入） ===== */}
+      <section className="rounded-xl2 border-2 border-dashed border-indigo-200 bg-white p-5 shadow-soft">
+        <h3 className="mb-1 flex items-center gap-2 font-semibold text-slate-700">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-macaron-pink text-xs font-bold text-white">4</span>
+          目标导师资料（心仪导师，必填）
         </h3>
-        <div className="space-y-4">
+        <p className="mb-4 text-xs text-slate-400">
+          请从官网、导师主页等公开渠道整理心仪导师的信息填入下方；导师主页网页链接仅作参考展示，不参与算法计算。
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <span className={labelCls}>院校层次（可多选，不选 = 不限）</span>
-            <div className="flex flex-wrap gap-2">
-              {SCHOOL_LEVELS.map((lv) => (
-                <button
-                  key={lv}
-                  type="button"
-                  onClick={() => toggleLevel(lv)}
-                  className={`rounded-full border px-4 py-1.5 text-sm transition ${
-                    schoolLevels.includes(lv)
-                      ? 'border-indigo-300 bg-indigo-50 font-medium text-indigo-600'
-                      : 'border-slate-200 bg-white text-slate-500 hover:border-indigo-200'
-                  }`}
-                >
-                  {lv}
-                </button>
-              ))}
-            </div>
+            <label className={labelCls} htmlFor="tName">导师姓名</label>
+            <input id="tName" className={inputCls} placeholder="如：张云帆" value={tName} onChange={(e) => setTName(e.target.value)} />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className={labelCls} htmlFor="region">所在地区</label>
-              <select id="region" className={inputCls} value={region} onChange={(e) => setRegion(e.target.value)}>
-                <option value="">不限地区</option>
-                {REGIONS.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-end">
-              <label className="flex cursor-pointer items-center gap-2 pb-2.5 text-sm text-slate-600">
-                <input
-                  type="checkbox"
-                  checked={onlyRecruiting}
-                  onChange={(e) => setOnlyRecruiting(e.target.checked)}
-                  className="h-4 w-4 accent-indigo-500"
-                />
-                仅查看当前招收博士的导师
-              </label>
-            </div>
+          <div>
+            <label className={labelCls} htmlFor="tSchool">单位/院校</label>
+            <input id="tSchool" className={inputCls} placeholder="如：浙江大学" value={tSchool} onChange={(e) => setTSchool(e.target.value)} />
+          </div>
+          <div>
+            <label className={labelCls} htmlFor="tTitle">职称</label>
+            <input id="tTitle" className={inputCls} placeholder="如：教授 / 研究员" value={tTitle} onChange={(e) => setTTitle(e.target.value)} />
+          </div>
+          <div>
+            <label className={labelCls} htmlFor="tLevel2">导师所属二级学科（选填）</label>
+            <input id="tLevel2" className={inputCls} placeholder="如：医学图像处理" value={tLevel2} onChange={(e) => setTLevel2(e.target.value)} />
+          </div>
+          <div className="sm:col-span-2">
+            <label className={labelCls} htmlFor="tLevel1">导师所属一级学科（用于学科匹配评分）</label>
+            <select id="tLevel1" className={inputCls} value={tLevel1} onChange={(e) => setTLevel1(e.target.value)}>
+              <option value="">请选择一级学科</option>
+              {DISCIPLINE_CATEGORIES.map((cat) => (
+                <optgroup key={cat.code} label={`${cat.code} ${cat.category}`}>
+                  {cat.disciplines.map((d) => (
+                    <option key={d.code} value={d.name}>{d.name}</option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+          <div className="sm:col-span-2">
+            <label className={labelCls} htmlFor="tDirections">导师近5年研究方向（必填，每行一条）</label>
+            <textarea id="tDirections" className={inputCls} rows={3} placeholder={'如：\n医学影像人工智能分析\n深度学习方法与医学多模态数据'} value={tDirections} onChange={(e) => setTDirections(e.target.value)} />
+          </div>
+          <div>
+            <label className={labelCls} htmlFor="tPapers">导师近5年代表论文（每行一条，可写主题/标题）</label>
+            <textarea id="tPapers" className={inputCls} rows={3} placeholder={'如：\nMedical Image Segmentation with Transformers\nUnsupervised Anomaly Detection in CT Scans'} value={tPapers} onChange={(e) => setTPapers(e.target.value)} />
+          </div>
+          <div>
+            <label className={labelCls} htmlFor="tProjects">导师近5年科研项目（每行一条）</label>
+            <textarea id="tProjects" className={inputCls} rows={3} placeholder={'如：\n国家自然科学基金：医学影像智能诊断\n浙江省重点研发：多模态医疗数据平台'} value={tProjects} onChange={(e) => setTProjects(e.target.value)} />
+          </div>
+          <div className="sm:col-span-2">
+            <label className={labelCls} htmlFor="tWebpage">导师主页/资料网页（选填，仅展示参考）</label>
+            <input id="tWebpage" className={inputCls} type="url" placeholder="https://..." value={tWebpage} onChange={(e) => setTWebpage(e.target.value)} />
           </div>
         </div>
       </section>
@@ -222,7 +253,7 @@ export default function MatchForm({ initial, onSubmit }: Props) {
           disabled={!canSubmit}
           className="w-full rounded-full bg-gradient-to-r from-indigo-400 to-pink-400 px-10 py-3 font-semibold text-white shadow-soft transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
         >
-          🔍 开始匹配
+          🔍 计算匹配度
         </button>
         <button
           type="button"

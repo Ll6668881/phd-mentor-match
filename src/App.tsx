@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import type { MatchResult, UserInput } from './types';
-import { MENTORS } from './data/mentors';
+import type { TargetMatchResult, UserInput } from './types';
 import { EXAMPLE_INPUT } from './data/exampleInput';
-import { matchAll } from './utils/matcher';
+import { matchWithTargetMentor } from './utils/matcher';
 import HomePage from './pages/HomePage';
 import ResultsPage from './pages/ResultsPage';
 import AboutPage from './pages/AboutPage';
@@ -17,15 +16,12 @@ const NAV: { key: Page; label: string }[] = [
 export default function App() {
   const [page, setPage] = useState<Page>('home');
   const [lastInput, setLastInput] = useState<UserInput>(EXAMPLE_INPUT);
-  const [results, setResults] = useState<MatchResult[]>([]);
-  const [totalCandidates, setTotalCandidates] = useState(0);
+  const [result, setResult] = useState<TargetMatchResult | null>(null);
 
-  /** 首页表单提交：本地完成全部匹配计算（无后端） */
+  /** 首页表单提交：直接计算用户与目标导师的匹配度（本地完成，无后端） */
   const handleSubmit = (input: UserInput) => {
-    const { results: r, totalCandidates: t } = matchAll(input, MENTORS);
     setLastInput(input);
-    setResults(r);
-    setTotalCandidates(t);
+    setResult(matchWithTargetMentor(input, input.targetMentor));
     setPage('results');
     window.scrollTo({ top: 0 });
   };
@@ -61,7 +57,7 @@ export default function App() {
                 {n.label}
               </button>
             ))}
-            {results.length > 0 && (
+            {result && (
               <button
                 onClick={() => {
                   setPage('results');
@@ -81,15 +77,15 @@ export default function App() {
       {/* 页面内容 */}
       <main className="flex-1">
         {page === 'home' && <HomePage initial={lastInput} onSubmit={handleSubmit} />}
-        {page === 'results' && (
-          <ResultsPage input={lastInput} results={results} totalCandidates={totalCandidates} onBack={goHome} />
+        {page === 'results' && result && (
+          <ResultsPage input={lastInput} result={result} onBack={goHome} />
         )}
         {page === 'about' && <AboutPage />}
       </main>
 
       {/* 底部 */}
       <footer className="border-t border-purple-100 bg-white/60 py-5 text-center text-xs text-slate-400">
-        博士生导师筛选匹配系统（演示版） · 匹配结果仅供申博参考，不能替代官网招生简章与导师真实招生情况
+        博士生导师匹配系统（演示版） · 匹配结果仅供申博参考，务必核对院校研究生院官网与导师主页
       </footer>
     </div>
   );

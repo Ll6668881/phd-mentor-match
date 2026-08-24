@@ -1,4 +1,4 @@
-import type { MatchResult, Mentor, ScoreBreakdown, UserInput } from '../types';
+import type { MatchResult, Mentor, ScoreBreakdown, TargetMatchResult, TargetMentor, UserInput } from '../types';
 
 /**
  * ============================================================
@@ -18,7 +18,9 @@ import type { MatchResult, Mentor, ScoreBreakdown, UserInput } from '../types';
  *  1. 只参考导师近 5 年研究（researchDirections/recentTopics/recentPapers 字段本身即近5年），
  *     不参考 10 年前陈旧方向；
  *  2. 同一导师以最新课题、最新论文为判断依据（recent* 字段）；
- *  3. 排除已经停止招收博士的导师（acceptingStudents === false）；
+ *  3. 数据库限定（强制）：仅 phd_qualification=1（具备博士招生资格）且
+ *     update_year>=2021（近5年数据）的导师进入匹配池，陈旧数据与停止招生
+ *     导师一律排除（对应数据库 WHERE 条件 phd_qualification=1 AND update_year>=2021）；
  *  4. TF-IDF 中的 IDF 以全体 mock 导师的文本为语料计算，能自动降低
  *     "研究/方法/分析" 等通用高频词的权重，突出学科特色词。
  * ============================================================
@@ -234,9 +236,6 @@ export function calculateMatch(user: UserInput, mentor: Mentor, corpus: Corpus):
   const warnings: string[] = [];
   if (mentor.note) warnings.push(mentor.note);
   if (mentor.publicationCount5y < 5) warnings.push('近5年发文偏少，科研产出请进一步核实');
-  if (mentor.isDoctoralSupervisor && !mentor.acceptingStudents) {
-    warnings.push('该导师当前暂停招收博士，请以官网招生信息为准');
-  }
   if (semanticScore < 10 && totalScore > 0) {
     warnings.push('研究方向重合度有限，当前匹配主要来自学科与成果层面，报考前建议深入了解导师方向');
   }
@@ -255,8 +254,9 @@ export function matchAll(
 ): { results: MatchResult[]; totalCandidates: number } {
   const corpus = buildCorpus(mentors);
 
-  // 过滤：排除已经停止招收博士的导师
-  const candidates = mentors.filter((m) => m.acceptingStudents);
+  // 过滤：强制 WHERE 条件 phd_qualification = 1 AND update_year >= 2021
+  // （mock 数据同样遵循此限定：退休/停止招生导师 phdQualification=0，不会出现在推荐结果）
+  const candidates = mentors.filter((m) => m.phdQualification === 1 && m.updateYear >= 2021);
   const filtered = candidates.filter((m) => {
     // 院校层次过滤（多选，空 = 不限）
     if (user.filters.schoolLevels.length > 0 && !user.filters.schoolLevels.includes(m.schoolLevel)) return false;
@@ -272,4 +272,131 @@ export function matchAll(
     .slice(0, 10);
 
   return { results, totalCandidates: filtered.length };
+}
+
+/**
+ * ============================================================
+ * 单导师匹配模式（当前主流程）
+ * ============================================================
+ * 用户填写个人简历/报考方向，并自行输入心仪导师的资料
+ * （研究方向、近5年论文、近5年项目、所属学科等），
+ * 直接计算"用户 vs 目标导师"的匹配度。
+ *
+ * 与内置库模式的区别：
+ *  - 无导师语料库，IDF 以"用户文本 + 导师文本"双方构成 2 文档微型语料计算；
+ *  - 权重不变：方向语义相似度 50 + 科研契合度 30 + 学科匹配 20；
+ *  - 导师主页网页链接仅展示参考，不参与算法计算。
+ * ============================================================
+ */
+
+/** 以两个文档为语料计算 IDF（N=2，平滑处理） */
+function idfOfTwo(docA: string[], docB: string[]): Map<string, number> {
+  const docs = [docA, docB];
+  const df = new Map<string, number>();
+  for (const doc of docs) {
+    for (const t of new Set(doc)) df.set(t, (df.get(t) ?? 0) + 1);
+  }
+  const idf = new Map<string, number>();
+  for (const [t, count] of df) {
+    // 平滑逆文档频率：ln((N+1)/(df+1)) + 1，N=2
+    idf.set(t, Math.log(3 / (count + 1)) + 1);
+  }
+  return idf;
+}
+
+/**
+ * 计算用户与心仪导师的匹配度（单导师模式主入口）。
+ * 依据用户填写的目标导师资料直接计算，结果不含 Top 列表。
+ */
+export function matchWithTargetMentor(user: UserInput, target: TargetMentor): TargetMatchResult {
+  // ---------- 文本准备 ----------
+  const userDirText = joinText([user.achievements.targetDirection, ...user.achievements.researchInterests]);
+  const mentorDirText = joinText(target.researchDirections);
+  const userResText = joinText([
+    ...user.achievements.papers,
+    ...user.achievements.projects,
+    ...user.achievements.patents,
+  ]);
+  const mentorResText = joinText([...target.recentPapers, ...target.recentProjects]);
+
+  // 微型语料 IDF：以用户与导师双方文本构成 2 文档语料
+  const dirIdf = idfOfTwo(extractTokens(userDirText), extractTokens(mentorDirText));
+  const outIdf = idfOfTwo(extractTokens(userResText), extractTokens(mentorResText));
+
+  const uDirVec = toTfIdfVec(extractTokens(userDirText), dirIdf);
+  const mDirVec = toTfIdfVec(extractTokens(mentorDirText), dirIdf);
+  const uResVec = toTfIdfVec(extractTokens(userResText), outIdf);
+  const mResVec = toTfIdfVec(extractTokens(mentorResText), outIdf);
+
+  // ---------- ① 研究方向语义相似度（满分 50 分） ----------
+  const dirCos = cosineSimilarity(uDirVec, mDirVec);
+  const enhancedCos = Math.min(1, dirCos * 1.35);
+  const semanticScore = clamp(Math.round(enhancedCos * 50 * 100) / 100, 0, 50);
+
+  // ---------- ② 科研成果契合度（满分 30 分） ----------
+  const resJaccard = weightedJaccard(uResVec, mResVec);
+  const enhancedJaccard = Math.min(1, resJaccard * 1.35);
+  const researchScore = clamp(Math.round(enhancedJaccard * 30 * 100) / 100, 0, 30);
+
+  // ---------- ③ 学科专业匹配（满分 20 分） ----------
+  let disciplineScore = 0;
+  const sameLevel1 = user.discipline.level1 !== '' && user.discipline.level1 === target.level1;
+  if (sameLevel1) disciplineScore += 12; // 一级学科一致即基础分
+  const userL2 = user.discipline.level2.trim();
+  const mentorL2 = target.level2.trim();
+  let l2Matched = false;
+  if (userL2 && mentorL2) {
+    const a = new Set(extractTokens(userL2));
+    const b = new Set(extractTokens(mentorL2));
+    l2Matched = [...a].some((t) => b.has(t)) || mentorL2.includes(userL2) || userL2.includes(mentorL2);
+  }
+  if (l2Matched) disciplineScore += 8; // 二级学科高度匹配再加分
+
+  // ---------- 综合分（100 分制） ----------
+  const totalScore = clamp(Math.round(semanticScore + researchScore + disciplineScore), 0, 100);
+  const breakdown: ScoreBreakdown = { semantic: semanticScore, research: researchScore, discipline: disciplineScore };
+
+  // ---------- ✅ 匹配点说明（逐条生成，保证非空） ----------
+  const matchPoints: string[] = [];
+  if (sameLevel1) {
+    matchPoints.push(`学科对口：您的「${user.discipline.level1}」与导师所属一级学科一致`);
+  }
+  if (l2Matched) {
+    matchPoints.push(`二级学科高度匹配：您的「${userL2}」与导师所属「${mentorL2}」重合`);
+  }
+  if (dirCos >= 0.45) {
+    matchPoints.push(`研究方向高度重合：您的「${user.achievements.targetDirection}」与导师主攻方向「${target.researchDirections[0] || '未填写'}」一致`);
+  } else if (dirCos >= 0.25) {
+    matchPoints.push(`研究方向较为契合：您的拟报考方向与导师近5年方向「${target.researchDirections[0] || '未填写'}」相关度较高`);
+  } else if (dirCos > 0) {
+    const hits = topHits(uDirVec, mDirVec);
+    matchPoints.push(`研究方向存在一定关联：命中「${hits.join('、')}」等关键术语`);
+  } else {
+    matchPoints.push('研究方向重合度较低：您拟报考方向与导师主攻方向交集有限');
+  }
+  if (resJaccard >= 0.3) {
+    matchPoints.push('科研成果高度契合：您的论文/项目/专利与导师近5年论文、项目领域一致');
+  } else if (resJaccard >= 0.15) {
+    matchPoints.push('科研成果部分契合：您的论文/项目/专利与导师近5年论文、项目存在交叉领域');
+  } else if (resJaccard > 0) {
+    const hits = topHits(uResVec, mResVec);
+    matchPoints.push(`科研成果存在少量关联：与导师近5年产出命中「${hits.join('、')}」等共同主题`);
+  } else {
+    matchPoints.push('科研成果关联较弱：您已有成果与导师近5年论文/项目领域交集有限');
+  }
+
+  // ---------- ⚠️ 待注意点（客观风险提示，无风险则标"无特殊提示"） ----------
+  const warnings: string[] = [];
+  if (target.researchDirections.length === 0) {
+    warnings.push('导师研究方向未填写，方向匹配度参考价值有限');
+  }
+  if (target.recentPapers.length + target.recentProjects.length === 0) {
+    warnings.push('导师近5年论文/项目未填写，科研成果契合度评估有限，请补充后重新计算');
+  }
+  if (totalScore < 45 && totalScore > 0) {
+    warnings.push('整体匹配度偏低，报考前请深入了解导师近年真实成果、招生名额与招生方式');
+  }
+  if (warnings.length === 0) warnings.push('无特殊提示');
+
+  return { totalScore, breakdown, matchPoints, warnings };
 }
