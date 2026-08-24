@@ -10,7 +10,7 @@ export default function Disclaimer({ compact = false }: { compact?: boolean }) {
       }`}
     >
       <span className="font-semibold">⚠️ 免责声明：</span>
-      本工具匹配结果仅供申博参考，不能替代官网招生简章、导师真实招生情况，不保证导师实际招生名额。演示版使用模拟数据。
+      数据库数据来源于公开学术元数据，不代表导师当年实际招生名额，仅供申博参考，务必核对院校研究生院官网。演示版使用模拟数据。
     </div>
   );
 }

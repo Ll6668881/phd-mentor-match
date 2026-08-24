@@ -26,7 +26,8 @@ export const MENTORS: Mentor[] = [
     department: '计算机科学与技术系',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '机器学习与数据挖掘' },
     researchDirections: [
       '大规模机器学习理论与算法',
@@ -52,7 +53,8 @@ export const MENTORS: Mentor[] = [
     department: '计算机学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '计算机视觉' },
     researchDirections: [
       '计算机视觉与多媒体内容理解',
@@ -77,7 +79,8 @@ export const MENTORS: Mentor[] = [
     department: '计算机科学与技术学院',
     title: '研究员',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '自然语言处理' },
     researchDirections: [
       '大语言模型对齐与评测',
@@ -102,7 +105,8 @@ export const MENTORS: Mentor[] = [
     department: '计算机科学与工程系',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '大数据与数据挖掘' },
     researchDirections: [
       '大数据分析与数据挖掘',
@@ -127,7 +131,8 @@ export const MENTORS: Mentor[] = [
     department: '计算机科学与技术学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '高性能计算与深度学习' },
     researchDirections: [
       '深度学习系统与算子优化',
@@ -152,7 +157,8 @@ export const MENTORS: Mentor[] = [
     department: '计算学部',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '自然语言处理与信息检索' },
     researchDirections: [
       '信息检索与问答系统',
@@ -177,7 +183,8 @@ export const MENTORS: Mentor[] = [
     department: '计算机科学与技术学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '智能感知与图像处理' },
     researchDirections: [
       '智能感知与图像理解',
@@ -202,7 +209,8 @@ export const MENTORS: Mentor[] = [
     department: '计算机科学与工程学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '多媒体与计算机视觉' },
     researchDirections: [
       '多媒体内容分析与检索',
@@ -227,7 +235,8 @@ export const MENTORS: Mentor[] = [
     department: '计算机学院',
     title: '副教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '机器学习与数据挖掘' },
     researchDirections: [
       '机器学习算法设计与优化',
@@ -252,7 +261,8 @@ export const MENTORS: Mentor[] = [
     department: '计算机学院',
     title: '副教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '边缘计算与物联网' },
     researchDirections: [
       '边缘智能计算',
@@ -278,7 +288,8 @@ export const MENTORS: Mentor[] = [
     department: '计算机科学与技术学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '机器学习与智慧交通' },
     researchDirections: [
       '机器学习与智能交通',
@@ -305,7 +316,8 @@ export const MENTORS: Mentor[] = [
     department: '软件学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '软件测试与质量保证' },
     researchDirections: [
       '智能软件测试技术',
@@ -330,7 +342,8 @@ export const MENTORS: Mentor[] = [
     department: '软件工程学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '计算机科学与技术', level2: '形式化方法' },
     researchDirections: [
       '形式化验证与程序安全',
@@ -357,7 +370,8 @@ export const MENTORS: Mentor[] = [
     department: '信息与通信工程学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '信息与通信工程', level2: '无线通信与信号处理' },
     researchDirections: [
       '6G 无线通信关键技术',
@@ -383,7 +397,8 @@ export const MENTORS: Mentor[] = [
     department: '通信工程学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '信息与通信工程', level2: '雷达信号处理' },
     researchDirections: [
       '雷达信号处理与目标识别',
@@ -410,7 +425,8 @@ export const MENTORS: Mentor[] = [
     department: '控制科学与工程系',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '控制科学与工程', level2: '机器人控制' },
     researchDirections: [
       '智能机器人运动控制',
@@ -435,7 +451,8 @@ export const MENTORS: Mentor[] = [
     department: '人工智能与自动化学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '控制科学与工程', level2: '智能系统与控制' },
     researchDirections: [
       '智能优化与控制',
@@ -462,7 +479,8 @@ export const MENTORS: Mentor[] = [
     department: '电子科学与工程学院',
     title: '研究员',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '电子科学与技术', level2: '集成电路与器件' },
     researchDirections: [
       '集成电路设计与 EDA',
@@ -487,7 +505,8 @@ export const MENTORS: Mentor[] = [
     department: '电子科学与工程学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '电子科学与技术', level2: '微电子与光电子' },
     researchDirections: [
       '微电子器件与工艺',
@@ -514,7 +533,8 @@ export const MENTORS: Mentor[] = [
     department: '数学科学学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '数学', level2: '计算数学' },
     researchDirections: [
       '偏微分方程数值方法',
@@ -539,7 +559,8 @@ export const MENTORS: Mentor[] = [
     department: '数学科学学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '数学', level2: '概率论与数理统计' },
     researchDirections: [
       '高维统计推断',
@@ -566,7 +587,8 @@ export const MENTORS: Mentor[] = [
     department: '物理学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '物理学', level2: '凝聚态物理' },
     researchDirections: [
       '拓扑材料与拓扑物态',
@@ -591,7 +613,8 @@ export const MENTORS: Mentor[] = [
     department: '物理学院',
     title: '研究员',
     isDoctoralSupervisor: true,
-    acceptingStudents: false,
+    phdQualification: 0,
+    updateYear: 2022,
     disciplines: { level1: '物理学', level2: '量子信息与量子光学' },
     researchDirections: [
       '量子信息与量子计算',
@@ -619,7 +642,8 @@ export const MENTORS: Mentor[] = [
     department: '化学化工学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '化学', level2: '材料化学' },
     researchDirections: [
       '功能配合物材料',
@@ -644,7 +668,8 @@ export const MENTORS: Mentor[] = [
     department: '化工学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '化学', level2: '化学工程与催化' },
     researchDirections: [
       '多相催化反应工程',
@@ -671,7 +696,8 @@ export const MENTORS: Mentor[] = [
     department: '生命科学学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '生物学', level2: '分子生物学' },
     researchDirections: [
       '基因表达调控机制',
@@ -696,7 +722,8 @@ export const MENTORS: Mentor[] = [
     department: '生命科学学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '生物学', level2: '基因组学与生物信息' },
     researchDirections: [
       '基因组学与进化生物学',
@@ -723,7 +750,8 @@ export const MENTORS: Mentor[] = [
     department: '生物医学工程与仪器科学学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '生物医学工程', level2: '医学影像与智能诊断' },
     researchDirections: [
       '医学影像智能分析',
@@ -749,7 +777,8 @@ export const MENTORS: Mentor[] = [
     department: '生物科学与医学工程学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '生物医学工程', level2: '生物材料与组织工程' },
     researchDirections: [
       '生物医用高分子材料',
@@ -776,7 +805,8 @@ export const MENTORS: Mentor[] = [
     department: '上海医学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '临床医学', level2: '消化内科' },
     researchDirections: [
       '消化道肿瘤早筛与早诊',
@@ -801,7 +831,8 @@ export const MENTORS: Mentor[] = [
     department: '华西临床医学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '临床医学', level2: '心血管内科' },
     researchDirections: [
       '心血管疾病介入治疗',
@@ -828,7 +859,8 @@ export const MENTORS: Mentor[] = [
     department: '材料科学与工程学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '材料科学与工程', level2: '金属材料与焊接' },
     researchDirections: [
       '先进金属结构材料',
@@ -853,7 +885,8 @@ export const MENTORS: Mentor[] = [
     department: '材料与化学化工学部',
     title: '副教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: false,
+    phdQualification: 0,
+    updateYear: 2022,
     disciplines: { level1: '材料科学与工程', level2: '高分子材料' },
     researchDirections: [
       '高分子复合材料',
@@ -881,7 +914,8 @@ export const MENTORS: Mentor[] = [
     department: '机械工程学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '机械工程', level2: '智能制造与装备' },
     researchDirections: [
       '智能制造与数字孪生',
@@ -908,7 +942,8 @@ export const MENTORS: Mentor[] = [
     department: '经济与管理学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '管理科学与工程', level2: '运营管理' },
     researchDirections: [
       '供应链与物流管理优化',
@@ -933,7 +968,8 @@ export const MENTORS: Mentor[] = [
     department: '管理与经济学部',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '管理科学与工程', level2: '工程管理与系统工程' },
     researchDirections: [
       '工程风险管理',
@@ -960,7 +996,8 @@ export const MENTORS: Mentor[] = [
     department: '商学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '工商管理', level2: '创新创业管理' },
     researchDirections: [
       '技术创新与产业演化',
@@ -987,7 +1024,8 @@ export const MENTORS: Mentor[] = [
     department: '金融学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '应用经济学', level2: '金融学' },
     researchDirections: [
       '金融风险管理',
@@ -1014,7 +1052,8 @@ export const MENTORS: Mentor[] = [
     department: '法学院',
     title: '教授',
     isDoctoralSupervisor: true,
-    acceptingStudents: true,
+    phdQualification: 1,
+    updateYear: 2025,
     disciplines: { level1: '法学', level2: '民商法学' },
     researchDirections: [
       '民法典体系与适用',
